@@ -1,0 +1,57 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: support desk
+status: living
+reviewed: 2026-11-10
+signature: problem
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) was merged as one issue: "dates parse mm/dd in eu locales". Read by
+tenant, not by the intake tag, its **412 unique reports** (the export has 427 rows; pages
+overlap) hold three different problems.
+
+<Callout kind="warn">
+Not one bug reported many times. Fixing the parser does not close all of #4471.
+</Callout>
+
+## The three problems
+
+1. **Parser reads dates month first: 374 reports.** Day-first tenants get day and month
+   flipped. This is what #4471 describes. Engineering fixed it (`fix(dates): parse dd/mm for eu locales`).
+2. **Booking-v3 form hint says `MM/DD/YYYY`: 33 reports.** Only the tenants on that form
+   (alder.physio, copper.studio, pale.harbour) are hit: their people type month first because
+   the form tells them to. A different bug with a different fix. Engineering marked it
+   won't fix ("booking-v3 form retired"), so those tenants stay broken until they move off the form.
+3. **Dates move by one day: 5 reports** (R-41202, R-41209, R-41236, R-41344, R-41620). "Invite
+   arrived before I booked", "Lisbon got Tuesday, Toronto got Monday". This is a time-zone or
+   day-boundary problem. It is not a flip. The code files these under `parser`, and no one owns them.
+
+374 + 33 + 5 = 412.
+
+## What the table shows
+
+The table is computed from the export. It counts the one-day moves under `parser`, where the
+code files them (379 = 374 + 5).
+
+<CauseTable ticket={4471} />
+
+## Why one ticket hid three
+
+- Merging by subject ([decision 0001](/kb/decisions/0001-dedupe-by-subject)) never reads the body.
+- Intake's tag is a guess from the browser. It is wrong often: 15 of the 33 hint reports are tagged `parser`,
+  and 23 parser reports are tagged `hint`.
+- The cause depends on the tenant's locale and booking form, which intake never looks up.
+
+## Lessons
+
+- Count by cause, not by subject. A big ticket can be several bugs.
+- A ticket marked known can still hold problems nobody owns. Re-read the bodies before you close it.
+
+<RenderStamp {signature} />

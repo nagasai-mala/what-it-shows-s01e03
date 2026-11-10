@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#4471 · three problems, not one · support kb</title>
+<style>:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#6b6a66;--line:#e3e0d8;--accent:#2f6f5e;--warn:#b4501f;--warn-bg:#fbeee6;--mono:ui-monospace,Menlo,monospace}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}.kb{max-width:760px;margin:0 auto;padding:2rem 16px 4rem}table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.92rem}th,td{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left}a{color:var(--accent)}code{font-family:var(--mono)}aside{border-left:4px solid var(--warn);background:var(--warn-bg);padding:.5rem 1rem;margin:1rem 0}.meta{color:var(--muted);font-size:.85rem}.wrong td{background:var(--warn-bg)}.stamp{margin-top:2rem;font:.85rem var(--mono);color:var(--muted)}.stamp b{color:var(--accent)}</style></head><body><div class="kb">
+<a href="/kb" style="font:.8rem var(--mono);color:var(--muted);text-decoration:none">support desk · kb</a>
+<h1>#4471 · three problems, not one</h1>
+<p class="meta">owner <b>support desk</b> · living · reviewed 2026-11-10</p>
+<p><a href="/kb/incidents/4471">#4471</a> was merged as one issue: "dates parse mm/dd in eu locales". Read by tenant, not by the intake tag, its <b>412 unique reports</b> (the export has 427 rows; pages overlap) hold three different problems.</p>
+<aside>Not one bug reported many times. Fixing the parser does not close all of #4471.</aside>
+<h2>The three problems</h2>
+<ol>
+<li><b>Parser reads dates month first: 374 reports.</b> Day-first tenants get day and month flipped. This is what #4471 describes. Engineering fixed it (<code>fix(dates): parse dd/mm for eu locales</code>).</li>
+<li><b>Booking-v3 form hint says <code>MM/DD/YYYY</code>: 33 reports.</b> Only the tenants on that form (alder.physio, copper.studio, pale.harbour) are hit: their people type month first because the form tells them to. A different bug with a different fix. Engineering marked it won't fix ("booking-v3 form retired"), so those tenants stay broken until they move off the form.</li>
+<li><b>Dates move by one day: 5 reports</b> (R-41202, R-41209, R-41236, R-41344, R-41620). "Invite arrived before I booked", "Lisbon got Tuesday, Toronto got Monday". This is a time-zone or day-boundary problem. It is not a flip. The code files these under <code>parser</code>, and no one owns them.</li></ol>
+<p>374 + 33 + 5 = 412.</p>
+<h2>What the table shows</h2>
+<p>The table is computed from the export. It counts the one-day moves under <code>parser</code>, where the code files them (379 = 374 + 5).</p>
+<p><b>412</b> reports merged into #4471 · <b>2</b> causes</p>
+<table><thead><tr><th>cause</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th></th></tr></thead><tbody>
+<tr><td><code>parser</code></td><td>379</td><td>parser ×356 · hint ×23</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td>#4471</td></tr>
+<tr class="wrong"><td><code>hint</code></td><td>33</td><td>hint ×18 · parser ×15</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td>not this ticket — no ticket of its own</td></tr></tbody></table>
+<p class="meta">5 reports read as a one-day move; filed under <code>parser</code> by tenant.</p>
+<h2>Why one ticket hid three</h2><ul>
+<li>Merging by subject (<a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a>) never reads the body.</li>
+<li>Intake's tag is a guess from the browser. It is wrong often: 15 of the 33 hint reports are tagged <code>parser</code>, and 23 parser reports are tagged <code>hint</code>.</li>
+<li>The cause depends on the tenant's locale and booking form, which intake never looks up.</li></ul>
+<h2>Lessons</h2><ul><li>Count by cause, not by subject. A big ticket can be several bugs.</li><li>A ticket marked known can still hold problems nobody owns. Re-read the bodies before you close it.</li></ul>
+<p class="stamp">desk ref <b>DR-QQNR-FQ0R</b></p>
+<footer class="meta" style="margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem">Pages are written by people. Tables and charts are built from data at render time.</footer></div></body></html>
